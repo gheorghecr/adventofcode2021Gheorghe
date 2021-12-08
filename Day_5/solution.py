@@ -22,6 +22,17 @@ def get_direct_lines_only(input):
 
     return filtered_input, max_value + 1
 
+def get_indirect_lines(input):
+    filtered_input = []
+    for value in input:
+        if value[0][0] != value[1][0] or value[0][1] != value[1][1]:
+            filtered_input.append(value)
+    
+    # get max value
+    max_value = int(max(max(list(map(max, filtered_input)))))
+
+    return filtered_input, max_value + 1
+
 def create_2d_array(max_value):
     # return [[0]*max_value]*max_value 
     return numpy.zeros((max_value, max_value))
@@ -60,9 +71,40 @@ def mark_lines(direct_lines, two_d_array):
                 for to_update in list_of_index_to_update:
                     two_d_array[int(line[0][1])][to_update] += 1
 
+    # print(two_d_array)
+    return two_d_array
+
+def mark_lines_diagonal(direct_lines, two_d_array):
+    for line in direct_lines:
+        print(line)
+        # check if line is horizontal or vertical
+        if int(line[0][0]) < int(line[1][0]):
+            # diagonal up
+            if int(line[0][1]) > int(line[1][1]):
+                x_value = int(line[1][1])
+                for value in range(int(line[1][1]), int(line[0][1]) + 1):
+                    two_d_array[x_value][value] += 1
+                    x_value -= 1
+            else:
+                x_value = int(line[0][1])
+                for value in range (int(line[0][1]), int(line[1][1]) + 1):
+                    two_d_array[x_value][value] += 1
+                    x_value += 1
+        else:
+            # diagonal down
+            if int(line[0][0]) > int(line[1][0]):
+                x_value = int(line[1][0])
+                for value in range (int(line[1][0]), int(line[0][0]) + 1):
+                    two_d_array[x_value][value] += 1
+                    x_value -= 1
+            else:
+                x_value = int(line[0][0])
+                for value in range (int(line[0][0]), int(line[1][0]) + 1):
+                    two_d_array[x_value][value] += 1
+                    x_value += 1
 
     print(two_d_array)
-    return count_number_of_values_higher_than_2(two_d_array)
+    return two_d_array
 
 def count_number_of_values_higher_than_2(two_d_array):
     total = 0
@@ -70,21 +112,27 @@ def count_number_of_values_higher_than_2(two_d_array):
         for value in line:
             if value > 1:
                 total += 1
-    print(total, "total")
     return total
 
 def part_1(input):
     direct_lines, max_value = get_direct_lines_only(input)
     two_d_array = create_2d_array(max_value)
-    print(two_d_array)
-    return mark_lines(direct_lines, two_d_array)
+    two_d_array = mark_lines(direct_lines, two_d_array)
+    return count_number_of_values_higher_than_2(two_d_array)
 
+def part_2(input):
+    direct_lines, max_value = get_direct_lines_only(input)
+    two_d_array = create_2d_array(max_value)
+    print(two_d_array)
+    two_d_array = mark_lines(direct_lines, two_d_array)
+    # fazer part 2
+    two_d_array = mark_lines_diagonal(direct_lines, two_d_array)
+    return count_number_of_values_higher_than_2(two_d_array)
 
 if __name__ == '__main__':
-    input = read_input("input.txt")
-    part_1(input)
-    # direct_lines, max_value = get_direct_lines_only(input)
-    # two_d_array = create_2d_array(max_value)
+    input = read_input("input_example.txt")
+    # print(part_1(input))
+    print(part_2(input))
 
     
 
